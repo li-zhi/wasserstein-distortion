@@ -12,7 +12,7 @@
 # ========================================================================================
 """Implementation of Wasserstein Distortion in PyTorch."""
 
-from typing import override
+from typing_extensions import override
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

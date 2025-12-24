@@ -62,32 +62,33 @@ def optimize_noise():
 def test_sample():
     """Compares PyTorch implementation to JAX implementation."""
     img1 = Image.open("./example/reference.png")
-    img1_tensor = im2tensor(np.asarray(img1))
+    img1_tensor = im2tensor(np.asarray(img1)).cuda()
     img2 = Image.open("./example/example.png")
-    img2_tensor = im2tensor(np.asarray(img2))
+    img2_tensor = im2tensor(np.asarray(img2)).cuda()
 
-    import codex.loss
-    import jax.numpy as jnp
+    # import codex.loss
+    # import jax.numpy as jnp
 
-    wloss_pytorch = VGG16WassersteinDistortion()
+    wloss_pytorch = VGG16WassersteinDistortion().cuda()
 
-    log2_sigma = torch.zeros_like(img1_tensor[:, 0:1, ...]) + 2
+    log2_sigma = (torch.zeros_like(img1_tensor[:, 0:1, ...]) + 2).cuda()
 
-    img1_jax_array = jnp.array(img1_tensor.cpu().numpy())
-    img2_jax_array = jnp.array(img2_tensor.cpu().numpy())
-    log2_sigma_jax = jnp.array(log2_sigma.cpu().numpy())
+    # img1_jax_array = jnp.array(img1_tensor.cpu().numpy())
+    # img2_jax_array = jnp.array(img2_tensor.cpu().numpy())
+    # log2_sigma_jax = jnp.array(log2_sigma.cpu().numpy())
 
-    codex.loss.load_vgg16_model(mock=False)
+    # codex.loss.load_vgg16_model(mock=False)
 
-    loss_jax = codex.loss.vgg16_wasserstein_distortion(
-        img1_jax_array[0], img2_jax_array[0], log2_sigma_jax[0, 0], num_scales=3
-    )
+    # loss_jax = codex.loss.vgg16_wasserstein_distortion(
+    #     img1_jax_array[0], img2_jax_array[0], log2_sigma_jax[0, 0], num_scales=3
+    # )
 
     loss_pytorch = wloss_pytorch(img1_tensor, img2_tensor, log2_sigma, num_scales=3)
     print("PyTorch Loss:", loss_pytorch.item())
-    print("JAX Loss:", loss_jax.item())
+    # print("JAX Loss:", loss_jax.item())
 
 
 if __name__ == "__main__":
     test_sample()
     optimize_noise()
+    print("Done.")
